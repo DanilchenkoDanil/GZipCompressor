@@ -5,7 +5,15 @@ VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GZipCompressor", "GZipCompressor\GZipCompressor.csproj", "{F517E00F-EB62-4FC1-B982-767F424B2A55}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GZipCompressor.Utils", "GZipCompressor.Utils\GZipCompressor.Utils.shproj", "{1F270B86-F67E-4C05-B1E9-B7205783D690}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GZipCompressor.Logic", "GZipCompressor.Logic\GZipCompressor.Logic.shproj", "{9ACC12B4-976B-4541-9FAF-A2F10C610BFB}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		GZipCompressor.Utils\GZipCompressor.Utils.projitems*{1f270b86-f67e-4c05-b1e9-b7205783d690}*SharedItemsImports = 13
+		GZipCompressor.Logic\GZipCompressor.Logic.projitems*{9acc12b4-976b-4541-9faf-a2f10c610bfb}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
