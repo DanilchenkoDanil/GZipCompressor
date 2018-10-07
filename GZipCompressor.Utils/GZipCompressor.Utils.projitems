@@ -9,5 +9,8 @@
     <Import_RootNamespace>GZipCompressor.Utils</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)FileManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HardwareManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GZipExceptions.cs" />
   </ItemGroup>
 </Project>

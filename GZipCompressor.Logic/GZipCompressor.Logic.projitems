@@ -10,7 +10,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Models\Compressors\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ICompressible.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CompressorManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Compressors\GZipCompressor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\FilePart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerQueue.cs" />
   </ItemGroup>
 </Project>
