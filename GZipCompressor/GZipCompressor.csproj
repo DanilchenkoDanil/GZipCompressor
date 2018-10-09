@@ -42,5 +42,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <Import Project="..\GZipCompressor.Utils\GZipCompressor.Utils.projitems" Label="Shared" />
+  <Import Project="..\GZipCompressor.Logic\GZipCompressor.Logic.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

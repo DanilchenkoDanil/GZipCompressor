@@ -9,8 +9,12 @@
     <Import_RootNamespace>GZipCompressor.Logic</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Models\Compressors\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ICompressible.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Compressors\GZipCompressor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\FilePart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerQueue.cs" />
   </ItemGroup>
 </Project>

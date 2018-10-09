@@ -13,6 +13,8 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		GZipCompressor.Utils\GZipCompressor.Utils.projitems*{1f270b86-f67e-4c05-b1e9-b7205783d690}*SharedItemsImports = 13
 		GZipCompressor.Logic\GZipCompressor.Logic.projitems*{9acc12b4-976b-4541-9faf-a2f10c610bfb}*SharedItemsImports = 13
+		GZipCompressor.Logic\GZipCompressor.Logic.projitems*{f517e00f-eb62-4fc1-b982-767f424b2a55}*SharedItemsImports = 4
+		GZipCompressor.Utils\GZipCompressor.Utils.projitems*{f517e00f-eb62-4fc1-b982-767f424b2a55}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
