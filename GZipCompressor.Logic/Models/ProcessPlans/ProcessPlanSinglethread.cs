@@ -1,17 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using GZipCompressor.Logic.Interfaces;
+using System.IO;
 
 namespace GZipCompressor.Logic.Models.ProcessPlans
 {
     class ProcessPlanSinglethread : ProcessPlanBase
     {
+        public ProcessPlanSinglethread(string inputFilePath, string outputFilePath, ICompressible compressor) {
+            m_inputFile = inputFilePath;
+            m_outputFile = outputFilePath;
+        }
+
         public override void Compress() {
-            throw new NotImplementedException();
+            byte[] originalBytes = File.ReadAllBytes(m_inputFile);
+            byte[] compressedBytes = m_compressor.Compress(originalBytes);
+            File.WriteAllBytes(m_outputFile, compressedBytes);
         }
 
         public override void Decompress() {
-            throw new NotImplementedException();
+            byte[] originalBytes = File.ReadAllBytes(m_inputFile);
+            byte[] decompressedBytes = m_compressor.Decompress(originalBytes);
+            File.WriteAllBytes(m_outputFile, decompressedBytes);
         }
     }
 }

@@ -11,9 +11,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
 {
     class ProcessPlanMultithread : ProcessPlanBase
     {
-        private string m_inputFile;
-        private string m_outputFile;
-        private ICompressible m_compressor;
         // raw file parts queue
         protected BlockingFixedQueue<FilePart> m_rawBlockQueue;
         // compressed file parts dictionary
@@ -33,7 +30,7 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
             initializeCompressing();
 
             Thread rawConsumer = new Thread(consumeRawFilePart);
-            Thread compressedConsumer = new Thread(() => { consumeCompressedFilePart(); });
+            Thread compressedConsumer = new Thread(() => { writeParts(); });
 
             using (var reader = new FileStream(m_inputFile, FileMode.Open, FileAccess.Read, FileShare.None, c_blockSize)) {
                 byte[] buffer = new byte[c_blockSize];
@@ -72,10 +69,10 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
         }
 
 
-        private void consumeCompressedFilePart() {
+        private void writeParts() {
             Action writeJob = () => {
                 var filePart = m_compressedBlockDictionary.Dequeue();
-                
+                using 
             };
             m_threadPool.QueueTask(writeJob);
         }

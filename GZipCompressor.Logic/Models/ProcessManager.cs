@@ -1,10 +1,7 @@
 ﻿using GZipCompressor.Logic.Interfaces;
 using GZipCompressor.Logic.Models.ProcessPlans;
 using GZipCompressor.Utils;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace GZipCompressor.Logic.Models
 {
@@ -22,6 +19,7 @@ namespace GZipCompressor.Logic.Models
             m_inputFile = inputFile;
             m_outputFile = outputFile;
             m_processMode = mode;
+            initPlan();
         }
 
         public void Process() {
@@ -37,17 +35,10 @@ namespace GZipCompressor.Logic.Models
             }
         }
 
-        private void compress() {
-            
-        }
-
-        private void decompress() {
-        }
-
         private void initPlan() {
             var fileSize = new FileInfo(m_inputFile).Length;
             if (fileSize < c_minFileSize) {
-                m_processPlan = new ProcessPlanSinglethread();
+                m_processPlan = new ProcessPlanSinglethread(m_inputFile, m_outputFile, m_compressor);
             } else {
                 m_processPlan = new ProcessPlanMultithread(m_inputFile, m_outputFile, m_compressor);
             }
