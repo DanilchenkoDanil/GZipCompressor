@@ -15,9 +15,9 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
         private string m_outputFile;
         private ICompressible m_compressor;
         // raw file parts queue
-        protected FixedBlockingQueue<FilePart> m_rawBlockQueue;
+        protected BlockingFixedQueue<FilePart> m_rawBlockQueue;
         // compressed file parts dictionary
-        protected FixedBlockingDictionary<long, FilePart> m_compressedBlockDictionary;
+        protected BlockingFixedSortQueue<FilePart> m_compressedBlockDictionary;
         private ThreadPool m_threadPool;
         private AutoResetEvent m_threadBouncer;
 
@@ -41,7 +41,7 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                 int readByteCount = 0;
                 while ((readByteCount = reader.Read(buffer, 0, c_blockSize)) > 0) {
                     FilePart filePart = new FilePart(buffer, blockIndex);
-                    m_rawBlockQueue.Add(filePart);
+                    m_rawBlockQueue.Enque(filePart);
                 }
                 blockIndex++;
             }
@@ -60,10 +60,11 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
             m_threadBouncer.WaitOne();
 
             Action compressionJob = () => {
-                var filePart = m_rawBlockQueue.Take();
+                var filePart = m_rawBlockQueue.Dequeue();
                 var compressedData = m_compressor.Compress(filePart.Data);
                 var compressedFilePart = new FilePart(compressedData, filePart.Index);
-                m_compressedBlockDictionary.Add(filePart.Index, compressedFilePart);
+                m_compressedBlockDictionary.Enque(compressedFilePart);
+                m_compressedBlockDictionary.Sort(new Sorters.ShellSort<FilePart>());
             };
             m_threadPool.QueueTask(compressionJob);
 
@@ -75,10 +76,10 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
             m_threadBouncer.WaitOne();
 
             Action writeJob = () => {
-                var filePart = m_compressedBlockDictionary.Take();
+                var filePart = m_compressedBlockDictionary.Dequeue();
                 var compressedData = m_compressor.Compress(filePart.Data);
                 var compressedFilePart = new FilePart(compressedData, filePart.Index);
-                m_compressedBlockDictionary.Add(filePart.Index, compressedFilePart);
+                m_compressedBlockDictionary.Enque(compressedFilePart);
             };
             m_threadPool.QueueTask(writeJob);
 
@@ -102,8 +103,8 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
             if (compressedQueueSize == 0 || rawQueueSize == 0)
                 throw new InsufficientMemoryException("Not enough memory");
 
-            m_rawBlockQueue = new FixedBlockingQueue<FilePart>(rawQueueSize);
-            m_compressedBlockDictionary = new FixedBlockingDictionary<int, FilePart>(compressedQueueSize);
+            m_rawBlockQueue = new BlockingFixedQueue<FilePart>(rawQueueSize);
+            m_compressedBlockDictionary = new BlockingFixedSortQueue<FilePart>(compressedQueueSize);
         }
     }
 }

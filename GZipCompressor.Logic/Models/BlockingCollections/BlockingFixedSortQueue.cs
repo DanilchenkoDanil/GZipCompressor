@@ -1,12 +1,16 @@
 ﻿using System.Threading;
+using GZipCompressor.Logic.Interfaces;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GZipCompressor.Logic.Models.BlockingCollections
 {
-    class BlockingQueue<TValue> : Queue<TValue>
+    internal class BlockingFixedSortQueue<TValue> : FixedSortQueue<TValue>, IEnumerable<TValue>
     {
         private object m_syncObject = new object();
 
-        public BlockingQueue() : base() { }
+        internal BlockingFixedSortQueue(int size) : base(size) { }
 
         public override void Enque(TValue item) {
             lock (m_syncObject) {
@@ -14,6 +18,7 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
                 if (Count == 1) Monitor.PulseAll(m_syncObject);
             }
         }
+
         public override TValue Dequeue() {
             lock (m_syncObject) {
                 while (Count == 0) Monitor.Wait(m_syncObject);
@@ -27,6 +32,20 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
             lock (m_syncObject) {
                 return base.GetPeek();
             }
+        }
+
+        public override void Sort(ISortAlg<TValue> sortAlg) {
+            lock (m_syncObject) {
+                base.Sort(sortAlg);
+            }
+        }
+
+        public IEnumerator<TValue> GetEnumerator() {
+            return Data.ToList().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
         }
     }
 }

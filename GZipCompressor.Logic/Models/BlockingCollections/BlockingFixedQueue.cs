@@ -1,25 +1,20 @@
-﻿using System.Threading;
-
-namespace GZipCompressor.Logic.Models.BlockingCollections
+﻿namespace GZipCompressor.Logic.Models.BlockingCollections
 {
-    class BlockingQueue<TValue> : Queue<TValue>
+    internal class BlockingFixedQueue<TValue> : FixedQueue<TValue>
     {
         private object m_syncObject = new object();
 
-        public BlockingQueue() : base() { }
+        internal BlockingFixedQueue(int size) : base(size) { }
 
         public override void Enque(TValue item) {
             lock (m_syncObject) {
                 base.Enque(item);
-                if (Count == 1) Monitor.PulseAll(m_syncObject);
             }
         }
+
         public override TValue Dequeue() {
             lock (m_syncObject) {
-                while (Count == 0) Monitor.Wait(m_syncObject);
-                var item = base.Dequeue();
-                Monitor.PulseAll(m_syncObject);
-                return item;
+                return base.Dequeue();
             }
         }
 

@@ -1,44 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 
 namespace GZipCompressor.Logic.Models.BlockingCollections
 {
-    internal class FixedQueue<TValue> : IEnumerable<TValue>
+    internal class FixedQueue<TValue> : Queue<TValue>
     {
-        private Queue<TValue> m_queue;
-        private int m_maxSize = 0;
-        public int Count { get => m_queue.Count; }
-        public bool IsFull { get => m_queue.Count == m_maxSize; }
-        public TValue Peek => m_queue.Peek();
+        protected readonly int Size;
 
-        internal FixedQueue(int maxSize) {
-            m_maxSize = maxSize;
-            m_queue = new Queue<TValue>(maxSize);
+        internal FixedQueue(int size) : base() {
+            Size = size;
+            Data = new TValue[size];
         }
 
-        internal bool TryEnque(TValue item) {
-            if (m_queue.Count < m_maxSize) {
-                m_queue.Enqueue(item);
-                return true;
-            }
-            return false;
+        public override void Enque(TValue item) {
+            if (Count == Size)
+                throw new InvalidOperationException("Queue is full");
+            base.Enque(item);
         }
 
-        internal bool TryDeque(out TValue item) {
-            if (m_queue.Count > 0) {
-                item = m_queue.Dequeue();
-                return true;
-            }
-            item = default(TValue);
-            return false;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return ((IEnumerable<TValue>)m_queue).GetEnumerator();
-        }
-
-        public IEnumerator<TValue> GetEnumerator() {
-            return ((IEnumerable<TValue>)m_queue).GetEnumerator();
+        protected override void MoveNext(ref int index) {
+            base.MoveNext(ref index);
+            if (index == Data.Length) index = 0;
         }
     }
 }
