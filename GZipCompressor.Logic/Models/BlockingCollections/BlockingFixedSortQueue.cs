@@ -12,10 +12,19 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
 
         internal BlockingFixedSortQueue(int size) : base(size) { }
 
-        public override void Enque(TValue item) {
+        public override void Enqueue(TValue item) {
             lock (m_syncObject) {
-                base.Enque(item);
+                base.Enqueue(item);
                 if (Count == 1) Monitor.PulseAll(m_syncObject);
+            }
+        }
+
+        public override bool TryEnqueue(TValue item) {
+            lock (m_syncObject) {
+                while (!base.TryEnqueue(item)) {
+                    Monitor.Wait(m_syncObject);
+                }
+                return true;
             }
         }
 
@@ -25,6 +34,15 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
                 var item = base.Dequeue();
                 Monitor.PulseAll(m_syncObject);
                 return item;
+            }
+        }
+
+        public override bool TryDequeue(out TValue item) {
+            lock (m_syncObject) {
+                while (!base.TryDequeue(out item)) {
+                    Monitor.Wait(m_syncObject);
+                }
+                return true;
             }
         }
 

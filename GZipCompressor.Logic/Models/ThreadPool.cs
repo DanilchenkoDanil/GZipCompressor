@@ -6,15 +6,17 @@ namespace GZipCompressor.Logic.Models
 {
     public sealed class ThreadPool : IDisposable
     {
-        private static int c_maxThreadPerCore = 2;
+        private const int c_maxThreadPerCore = 2;
+        private const int c_maxCallStack = 1000;
+
         public static int MaxThreads => c_maxThreadPerCore * Environment.ProcessorCount;
 
         public ThreadPool() {
-            m_workers = new BlockingFixedSortQueue<Thread>(MaxThreads);
+            m_workers = new BlockingFixedQueue<Thread>(MaxThreads);
             for (var i = 0; i < MaxThreads; ++i) {
                 var worker = new Thread(Worker) { Name = string.Concat("Worker ", i) };
                 worker.Start();
-                m_workers.Enque(worker);
+                m_workers.Enqueue(worker);
             }
         }
 
@@ -45,7 +47,7 @@ namespace GZipCompressor.Logic.Models
             lock (m_tasks) {
                 if (m_disallowAdd) { throw new InvalidOperationException("This Pool instance is in the process of being disposed, can't add anymore"); }
                 if (m_disposed) { throw new ObjectDisposedException("This Pool instance has already been disposed"); }
-                m_tasks.Enque(task);
+                m_tasks.Enqueue(task);
                 Monitor.PulseAll(m_tasks); // pulse because tasks count changed
             }
         }
@@ -54,35 +56,22 @@ namespace GZipCompressor.Logic.Models
             Action task = null;
             while (true) // loop until threadpool is disposed
             {
-                lock (m_tasks) // finding a task needs to be atomic
-                {
-                    while (true) // wait for our turn in _workers queue and an available task
-                    {
-                        if (m_disposed) {
-                            return;
-                        }
-                        if (null != m_workers.GetPeek() && object.ReferenceEquals(Thread.CurrentThread, m_workers.GetPeek()) && m_tasks.Count > 0) // we can only claim a task if its our turn (this worker thread is the first entry in _worker queue) and there is a task available
-                        {
-                            task = m_tasks.GetPeek();
-                            m_tasks.Dequeue();
-                            m_workers.Dequeue();
-                            Monitor.PulseAll(m_tasks); // pulse because current (First) worker changed (so that next available sleeping worker will pick up its task)
-                            break; // we found a task to process, break out from the above 'while (true)' loop
-                        }
-                        Monitor.Wait(m_tasks); // go to sleep, either not our turn or no task to process
-                    }
+                if (m_disposed) {
+                    return;
                 }
-
+                if (!m_workers.TryDequeue(out var curWorker)) {
+                    return;
+                }
                 task(); // process the found task
                 lock (m_tasks) {
-                    m_workers.Enque(Thread.CurrentThread);
+                    m_workers.Enqueue(Thread.CurrentThread);
                 }
                 task = null;
             }
         }
 
-        private readonly BlockingFixedSortQueue<Thread> m_workers; // queue of worker threads ready to process actions
-        private readonly BlockingQueue<Action> m_tasks = new BlockingQueue<Action>(); // actions to be processed by worker threads
+        private readonly BlockingFixedQueue<Thread> m_workers; // queue of worker threads ready to process actions
+        private readonly BlockingFixedQueue<Action> m_tasks = new BlockingFixedQueue<Action>(c_maxCallStack); // actions to be processed by worker threads
         private bool m_disallowAdd; // set to true when disposing queue but there are still tasks pending
         private bool m_disposed; // set to true when disposing queue and no more tasks are pending
     }

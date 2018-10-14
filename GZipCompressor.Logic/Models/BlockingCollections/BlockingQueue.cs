@@ -8,9 +8,9 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
 
         public BlockingQueue() : base() { }
 
-        public override void Enque(TValue item) {
+        public override void Enqueue(TValue item) {
             lock (m_syncObject) {
-                base.Enque(item);
+                base.Enqueue(item);
                 if (Count == 1) Monitor.PulseAll(m_syncObject);
             }
         }

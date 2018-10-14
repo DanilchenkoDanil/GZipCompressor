@@ -12,7 +12,7 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
 
         protected Queue() { }
 
-        public virtual void Enque(TValue item) {
+        public virtual void Enqueue(TValue item) {
             if (item == null)
                 throw new ArgumentNullException($"Parameter {nameof(item)} is null");
 

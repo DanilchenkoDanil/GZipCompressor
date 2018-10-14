@@ -1,8 +1,6 @@
-﻿using GZipCompressor.Logic.Models;
-
-namespace GZipCompressor.Logic.Interfaces
+﻿namespace GZipCompressor.Logic.Interfaces
 {
-    internal interface ISortAlg<TValue> where TValue : FilePart
+    internal interface ISortAlg<TValue>
     {
         void Sort(ref TValue[] array);
     }

@@ -33,7 +33,7 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
             initializeCompressing();
 
             Thread rawConsumer = new Thread(consumeRawFilePart);
-            Thread compressedConsumer = new Thread(consumeCompressedFilePart);
+            Thread compressedConsumer = new Thread(() => { consumeCompressedFilePart(); });
 
             using (var reader = new FileStream(m_inputFile, FileMode.Open, FileAccess.Read, FileShare.None, c_blockSize)) {
                 byte[] buffer = new byte[c_blockSize];
@@ -41,7 +41,7 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                 int readByteCount = 0;
                 while ((readByteCount = reader.Read(buffer, 0, c_blockSize)) > 0) {
                     FilePart filePart = new FilePart(buffer, blockIndex);
-                    m_rawBlockQueue.Enque(filePart);
+                    m_rawBlockQueue.Enqueue(filePart);
                 }
                 blockIndex++;
             }
@@ -63,7 +63,7 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                 var filePart = m_rawBlockQueue.Dequeue();
                 var compressedData = m_compressor.Compress(filePart.Data);
                 var compressedFilePart = new FilePart(compressedData, filePart.Index);
-                m_compressedBlockDictionary.Enque(compressedFilePart);
+                m_compressedBlockDictionary.Enqueue(compressedFilePart);
                 m_compressedBlockDictionary.Sort(new Sorters.ShellSort<FilePart>());
             };
             m_threadPool.QueueTask(compressionJob);
@@ -73,17 +73,11 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
 
 
         private void consumeCompressedFilePart() {
-            m_threadBouncer.WaitOne();
-
             Action writeJob = () => {
                 var filePart = m_compressedBlockDictionary.Dequeue();
-                var compressedData = m_compressor.Compress(filePart.Data);
-                var compressedFilePart = new FilePart(compressedData, filePart.Index);
-                m_compressedBlockDictionary.Enque(compressedFilePart);
+                
             };
             m_threadPool.QueueTask(writeJob);
-
-            m_threadBouncer.Set();
         }
 
         private void initializePlan() {
