@@ -10,11 +10,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ICompressible.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\BlockingQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\FixedDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\FixedQueue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Compressors\GZipCompressor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CustomBlockSeporator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\FilePart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerDictionary.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\ProducerConsumer\ProducerConsumerQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessPlans\ProcessPlanBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\FixedBlockingDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\FixedBlockingQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessPlans\ProcessPlanMultithread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessPlans\ProcessPlanSinglethread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ThreadPool.cs" />
   </ItemGroup>
 </Project>

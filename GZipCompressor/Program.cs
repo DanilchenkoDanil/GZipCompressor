@@ -9,12 +9,12 @@ namespace GZipCompressor
     {
         static void Main(string[] args) {
             try {
-                ParameterChecker.Check(args);
-                ProcessManager processManager = new ProcessManager(ParameterChecker.InputFilePath, ParameterChecker.OutputFilePath, ParameterChecker.ProcessMode);
+                ProgramOptions.Check(args);
+                ProcessManager processManager = new ProcessManager(ProgramOptions.InputFilePath, ProgramOptions.OutputFilePath, ProgramOptions.ProcessMode);
                 processManager.Process();
             } catch (ArgumentException argEx) {
                 Console.WriteLine(argEx.ToString());
-                Console.WriteLine(ParameterChecker.GetHelpInfo());
+                Console.WriteLine(ProgramOptions.GetHelpInfo());
             } catch (Exception ex) {
                 Console.WriteLine("Something goes wrong - {0}", ex.ToString());
                 Environment.Exit(1);

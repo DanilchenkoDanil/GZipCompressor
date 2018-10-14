@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StreamExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtension.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ParameterChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProgramOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProcessMode.cs" />
   </ItemGroup>
 </Project>

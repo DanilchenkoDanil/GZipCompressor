@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GZipCompressor.Utils
 {
-    public static class ParameterChecker
+    public static class ProgramOptions
     {
         public static string InputFilePath { get; private set; }
         public static string OutputFilePath { get; private set; }

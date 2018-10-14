@@ -1,4 +1,5 @@
 ﻿using GZipCompressor.Logic.Interfaces;
+using GZipCompressor.Logic.Models.ProcessPlans;
 using GZipCompressor.Utils;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,13 @@ namespace GZipCompressor.Logic.Models
 {
     public class ProcessManager
     {
-        private const int c_blockSize = 1024000; // 1mb
-
+        private const long c_minFileSize = 1024000 * 16; //  16mb
         private string m_inputFile;
         private string m_outputFile;
         private ProcessMode m_processMode;
         private ICompressible m_compressor;
+        private ProcessPlanBase m_processPlan;
+
 
         public ProcessManager(string inputFile, string outputFile, ProcessMode mode) {
             m_inputFile = inputFile;
@@ -25,30 +27,30 @@ namespace GZipCompressor.Logic.Models
         public void Process() {
             switch (m_processMode) {
                 case ProcessMode.Compress: {
-                    compress();
+                    m_processPlan.Compress();
                     break;
                 }
                 case ProcessMode.Decompress: {
-                    decompress();
+                    m_processPlan.Decompress();
                     break;
                 }
             }
         }
 
         private void compress() {
-            using (var reader = new FileStream(m_inputFile,FileMode.Open, FileAccess.Read, FileShare.None, c_blockSize)) {
-                byte[] buffer = new byte[c_blockSize];
-                int blockIndex = 0;
-                int readByteCount = 0;
-                while ((readByteCount = reader.Read(buffer, 0, c_blockSize)) > 0) {
-                    FilePart filePart = new FilePart(buffer, blockIndex);
-                    m_compressor.Compress(filePart.Data);
-                }
-                blockIndex++;
-            }
+            
         }
 
         private void decompress() {
+        }
+
+        private void initPlan() {
+            var fileSize = new FileInfo(m_inputFile).Length;
+            if (fileSize < c_minFileSize) {
+                m_processPlan = new ProcessPlanSinglethread();
+            } else {
+                m_processPlan = new ProcessPlanMultithread(m_inputFile, m_outputFile, m_compressor);
+            }
         }
     }
 }
