@@ -3,6 +3,11 @@ using System.Text;
 
 namespace GZipCompressor.Logic.Models
 {
+
+    /// <summary>
+    /// This class provides indicating is file was compressed by blocks.
+    /// <para>This block writes first into compressed file.</para>
+    /// </summary>
     internal static class CustomBlockSeporator
     {
         private const string c_seporatorRaw = "custom seporator string for indicating a block start";
@@ -16,7 +21,6 @@ namespace GZipCompressor.Logic.Models
             }
         }
 
-        // may be i dont need this
         public static byte[] GetSeporatorBytes() {
             return m_seporatorBytes;
         }

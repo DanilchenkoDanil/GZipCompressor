@@ -28,7 +28,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
             try {
                 initializePlan();
                 initializeCompressing();
-                Console.WriteLine("Compressing started <<<<<<<<<<<<<<<<<<");
 
                 Thread processThread = new Thread(consumeRawFilePart);
                 processThread.Start();
@@ -125,7 +124,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                         var compressedData = m_compressor.Compress(filePart.Data);
                         var compressedFilePart = new FilePart(compressedData, filePart.Index);
                         m_processedBlockQueue.Enqueue(compressedFilePart);
-                        Console.WriteLine(@"Compressed file part {0}", filePart.Index);
                         m_threadBouncer.Set();
                     };
                     threadPool.QueueTask(compressionJob);
@@ -141,7 +139,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                         var decompressedData = m_compressor.Decompress(filePart.Data);
                         var decompressedFilePart = new FilePart(decompressedData, filePart.Index);
                         m_processedBlockQueue.Enqueue(decompressedFilePart);
-                        Console.WriteLine(@"Compressed file part {0}", filePart.Index);
                         m_threadBouncer.Set();
                     };
                     threadPool.QueueTask(compressionJob);
@@ -158,7 +155,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                     FilePart minIndexPart = null;
                     // wait while filePart with exact index doesnt come
                     while (minIndexPart == null || minIndexPart.Index != i) {
-                        Console.WriteLine(@"Thread waiting for file part[{0}]", i);
                         m_threadBouncer.WaitOne();
                         FilePart tempMin = null;
                         try {
@@ -166,7 +162,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                         } catch(InvalidOperationException ex) {
                         }
                         minIndexPart = tempMin;
-                        Console.WriteLine(@"Thread getting file part[{0}]", minIndexPart?.Index);
                     }
                     // Sort all queue after new minValue
                     m_processedBlockQueue.Sort(new Sorters.ShellSort<FilePart>());
@@ -174,7 +169,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                     do {
                         // Erase item with minimal Index
                         if (!m_processedBlockQueue.TryDequeue(out currentFilePart)) return;
-                        Console.WriteLine(@"Write file part {0}", currentFilePart.Index);
                         byte[] blockHeader = BitConverter.GetBytes(currentFilePart.Data.Length);
                         // write header
                         fileStream.Write(blockHeader, 0, blockHeader.Length);
@@ -199,7 +193,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                     FilePart minIndexPart = null;
                     // wait while filePart with exact index doesnt come
                     while (minIndexPart == null || minIndexPart.Index != i) {
-                        Console.WriteLine(@"Thread waiting for file part[{0}]", i);
                         m_threadBouncer.WaitOne();
                         FilePart tempMin = null;
                         try {
@@ -207,7 +200,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                         } catch (InvalidOperationException ex) {
                         }
                         minIndexPart = tempMin;
-                        Console.WriteLine(@"Thread getting file part[{0}]", minIndexPart?.Index);
                     }
                     // Sort all queue after new minValue
                     m_processedBlockQueue.Sort(new Sorters.ShellSort<FilePart>());
@@ -215,7 +207,6 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
                     do {
                         // Erase item with minimal Index
                         if (!m_processedBlockQueue.TryDequeue(out currentFilePart)) return;
-                        Console.WriteLine(@"Write file part {0}", currentFilePart.Index);
                         byte[] blockHeader = BitConverter.GetBytes(currentFilePart.Data.Length);
 
                         // write payload
