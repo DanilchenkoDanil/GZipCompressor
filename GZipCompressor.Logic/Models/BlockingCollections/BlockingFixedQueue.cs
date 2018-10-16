@@ -1,58 +1,65 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace GZipCompressor.Logic.Models.BlockingCollections
 {
-    internal class BlockingFixedQueue<TValue> : FixedQueue<TValue>, IEnumerable<TValue>
+    internal class BlockingFixedQueue<TValue> : IEnumerable<TValue>
     {
-        private object m_syncObject = new object();
-
-        internal BlockingFixedQueue(int size) : base(size) { }
-
-        public override void Enqueue(TValue item) {
-            lock (m_syncObject) {
-                base.Enqueue(item);
-                if (Count == 1) Monitor.PulseAll(m_syncObject);
-            }
-        }
-
-        public override bool TryEnqueue(TValue item) {
-            lock (m_syncObject) {
-                while (!base.TryEnqueue(item)) {
-                    Monitor.Wait(m_syncObject);
+        protected object m_syncObject = new object();
+        protected readonly int Size;
+        protected readonly FixedQueue<TValue> Queue;
+        public int Count {
+            get {
+                lock (m_syncObject) {
+                    return Queue.Count;
                 }
-                return true;
+            }
+        }
+        internal BlockingFixedQueue(int size) {
+            Size = size;
+            Queue = new FixedQueue<TValue>(size);
+        }
+
+        internal BlockingFixedQueue(int size, FixedQueue<TValue> queue) {
+            Size = size;
+            Queue = queue;
+        }
+
+        public void Enqueue(TValue item) {
+            lock (m_syncObject) {
+                while (Queue.Count >= Size) Monitor.Wait(m_syncObject);
+                Queue.Enqueue(item);
+                if (Queue.Count == 1) Monitor.PulseAll(m_syncObject);
             }
         }
 
-        public override TValue Dequeue() {
+        public TValue Dequeue() {
             lock (m_syncObject) {
-                while (Count == 0) Monitor.Wait(m_syncObject);
-                var item = base.Dequeue();
+                while (Queue.Count == 0) Monitor.Wait(m_syncObject);
+                var item = Queue.Dequeue();
                 Monitor.PulseAll(m_syncObject);
                 return item;
             }
         }
 
-        public override bool TryDequeue(out TValue item) {
+        public virtual bool TryDequeue(out TValue item) {
             lock (m_syncObject) {
-                while (!base.TryDequeue(out item)) {
-                    Monitor.Wait(m_syncObject);
-                }
+                while (Queue.Count == 0) Monitor.Wait(m_syncObject);
+                item = Queue.Dequeue();
+                if (Queue.Count == Size - 1) Monitor.PulseAll(m_syncObject);
                 return true;
             }
         }
 
-        public override TValue GetPeek() {
+        public TValue GetPeek() {
             lock (m_syncObject) {
-                return base.GetPeek();
+                return Queue.GetPeek();
             }
         }
 
         public IEnumerator<TValue> GetEnumerator() {
-            return Data.ToList().GetEnumerator();
+            return Queue.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() {

@@ -6,7 +6,7 @@ namespace GZipCompressor.Logic.Models
     internal static class CustomBlockSeporator
     {
         private const string c_seporatorRaw = "custom seporator string for indicating a block start";
-        private static byte[] m_seporatorBytes;
+        private static byte[] m_seporatorBytes = new byte[64];
 
         static CustomBlockSeporator() {
             // Initialize
@@ -16,6 +16,7 @@ namespace GZipCompressor.Logic.Models
             }
         }
 
+        // may be i dont need this
         public static byte[] GetSeporatorBytes() {
             return m_seporatorBytes;
         }

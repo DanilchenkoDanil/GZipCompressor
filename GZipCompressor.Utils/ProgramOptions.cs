@@ -7,6 +7,8 @@ namespace GZipCompressor.Utils
 {
     public static class ProgramOptions
     {
+        public const long MinFileSizeForSingleThreadPlan = 1024000 * 16; //  16mb
+
         public static string InputFilePath { get; private set; }
         public static string OutputFilePath { get; private set; }
         public static ProcessMode ProcessMode { get; private set; }
@@ -24,11 +26,11 @@ namespace GZipCompressor.Utils
 
             // Check each parameter
 
-            if (!File.Exists(args[0])) {
+            if (!File.Exists(args[1])) {
                 throw new ArgumentException(string.Format(@"Parameter {0} is not valid", args[1]), new FileNotFoundException("File hasnt been found.",args[1]));
             }
 
-            InputFilePath = args[0];
+            InputFilePath = args[1];
 
             string outputFileDirectory = Path.GetDirectoryName(args[2]);
             string outputFileFileName = Path.GetFileName(args[2]);
@@ -40,7 +42,7 @@ namespace GZipCompressor.Utils
                 throw new ArgumentException(string.Format(@"Parameter {0} is not valid", args[2]), ex);
             }
 
-            OutputFilePath = args[1];
+            OutputFilePath = args[2];
         }
 
         public static string GetHelpInfo() {

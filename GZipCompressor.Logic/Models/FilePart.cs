@@ -1,6 +1,8 @@
-﻿namespace GZipCompressor.Logic.Models
+﻿using System;
+
+namespace GZipCompressor.Logic.Models
 {
-    internal class FilePart
+    internal class FilePart : IComparable<FilePart>
     {
         private readonly byte[] m_data;
         private readonly long m_index;
@@ -17,6 +19,10 @@
         // for decompressing
         public FilePart(byte[] data) {
             m_data = data;
+        }
+
+        public int CompareTo(FilePart other) {
+            return Index.CompareTo(other.Index);
         }
     }
 }

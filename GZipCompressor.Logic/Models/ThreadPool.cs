@@ -56,6 +56,9 @@ namespace GZipCompressor.Logic.Models
             Action task = null;
             while (true) // loop until threadpool is disposed
             {
+                if (!m_tasks.TryDequeue(out task)) {
+                    return;
+                }
                 if (m_disposed) {
                     return;
                 }
@@ -63,9 +66,7 @@ namespace GZipCompressor.Logic.Models
                     return;
                 }
                 task(); // process the found task
-                lock (m_tasks) {
-                    m_workers.Enqueue(Thread.CurrentThread);
-                }
+                m_workers.Enqueue(Thread.CurrentThread);
                 task = null;
             }
         }

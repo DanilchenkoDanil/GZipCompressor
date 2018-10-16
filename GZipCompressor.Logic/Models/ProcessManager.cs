@@ -2,12 +2,12 @@
 using GZipCompressor.Logic.Models.ProcessPlans;
 using GZipCompressor.Utils;
 using System.IO;
+using System.Linq;
 
 namespace GZipCompressor.Logic.Models
 {
     public class ProcessManager
     {
-        private const long c_minFileSize = 1024000 * 16; //  16mb
         private string m_inputFile;
         private string m_outputFile;
         private ProcessMode m_processMode;
@@ -19,7 +19,8 @@ namespace GZipCompressor.Logic.Models
             m_inputFile = inputFile;
             m_outputFile = outputFile;
             m_processMode = mode;
-            initPlan();
+            m_compressor = new Compressors.GZipCompressor();
+            InitializePlan();
         }
 
         public void Process() {
@@ -35,12 +36,26 @@ namespace GZipCompressor.Logic.Models
             }
         }
 
-        private void initPlan() {
-            var fileSize = new FileInfo(m_inputFile).Length;
-            if (fileSize < c_minFileSize) {
-                m_processPlan = new ProcessPlanSinglethread(m_inputFile, m_outputFile, m_compressor);
+        public void InitializePlan() {
+            // Need to check size input file size
+            var inputFileInfo = new FileInfo(ProgramOptions.InputFilePath);
+            if (inputFileInfo.Length <= ProgramOptions.MinFileSizeForSingleThreadPlan) {
+                m_processPlan = new ProcessPlanSinglethread(ProgramOptions.InputFilePath, ProgramOptions.OutputFilePath, new Compressors.GZipCompressor());
             } else {
-                m_processPlan = new ProcessPlanMultithread(m_inputFile, m_outputFile, m_compressor);
+                m_processPlan = new ProcessPlanMultithread(ProgramOptions.InputFilePath, ProgramOptions.OutputFilePath, new Compressors.GZipCompressor());
+            }
+            // And then check a custom seporator if its a small file
+            if (m_processMode == ProcessMode.Decompress && m_processPlan is ProcessPlanSinglethread) {
+                var customSeporatorBytes = Logic.Models.CustomBlockSeporator.GetSeporatorBytes();
+                var possibleBytes = new byte[customSeporatorBytes.Length];
+                // read first bytes
+                using (var streamReader = new FileStream(ProgramOptions.InputFilePath, FileMode.Open)) {
+                    var readBytes = streamReader.Read(possibleBytes, 0, possibleBytes.Length);
+                }
+
+                if (possibleBytes.SequenceEqual(customSeporatorBytes)) {
+                    m_processPlan = new ProcessPlanMultithread(ProgramOptions.InputFilePath, ProgramOptions.OutputFilePath, new Compressors.GZipCompressor());
+                }
             }
         }
     }

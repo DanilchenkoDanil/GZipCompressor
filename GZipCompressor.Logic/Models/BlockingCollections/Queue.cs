@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GZipCompressor.Logic.Models.BlockingCollections
 {
-    class Queue<TValue>
+    class Queue<TValue> : IEnumerable<TValue>
     {
         protected TValue[] Data;
         protected int Head;
@@ -10,7 +13,7 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
 
         public int Count = 0;
 
-        protected Queue() { }
+        public Queue() { }
 
         public virtual void Enqueue(TValue item) {
             if (item == null)
@@ -41,7 +44,15 @@ namespace GZipCompressor.Logic.Models.BlockingCollections
         }
 
         protected virtual void MoveNext(ref int index) {
-            Tail = ++index;
+            ++index;
+        }
+
+        public IEnumerator<TValue> GetEnumerator() {
+            return Data.ToList().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return GetEnumerator();
         }
     }
 }
