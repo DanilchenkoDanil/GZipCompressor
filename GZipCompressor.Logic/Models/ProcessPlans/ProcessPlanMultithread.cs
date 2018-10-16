@@ -148,7 +148,7 @@ namespace GZipCompressor.Logic.Models.ProcessPlans
         #endregion
         #region Write methods
         private void writeCompressedParts() {
-            using (var fileStream = new FileStream(m_outputFile, FileMode.Open, FileAccess.Write, FileShare.None, c_blockSize)) {
+            using (var fileStream = new FileStream(m_outputFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, c_blockSize)) {
                 writeCustomHeader(fileStream);
                 int i = 0;
                 while (i < m_fileBlocksCount) {

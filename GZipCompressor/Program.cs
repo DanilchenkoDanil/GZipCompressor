@@ -5,9 +5,9 @@ using System;
 
 namespace GZipCompressor
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args) {
+        public static void Main(string[] args) {
             try {
                 ProgramOptions.Check(args);
                 ProcessManager processManager = new ProcessManager(ProgramOptions.InputFilePath, ProgramOptions.OutputFilePath, ProgramOptions.ProcessMode);
