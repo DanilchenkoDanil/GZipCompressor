@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F517E00F-EB62-4FC1-B982-767F424B2A55}</ProjectGuid>
+    <ProjectGuid>{164B3DE0-B4FB-4F53-81DC-FAF67156D75B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GZipCompressor</RootNamespace>
-    <AssemblyName>GZipCompressor</AssemblyName>
+    <RootNamespace>GZipCompressor.Test</RootNamespace>
+    <AssemblyName>GZipCompressor.Test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,7 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,11 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="TestProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="..\GZipCompressor.Utils\GZipCompressor.Utils.projitems" Label="Shared" />
-  <Import Project="..\GZipCompressor.Logic\GZipCompressor.Logic.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\GZipCompressor\GZipCompressor.csproj">
+      <Project>{f517e00f-eb62-4fc1-b982-767f424b2a55}</Project>
+      <Name>GZipCompressor</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9acc12b4-976b-4541-9faf-a2f10c610bfb</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>GZipCompressor.Logic</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ICompressible.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ISortAlg.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\BlockingFixedQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\BlockingQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\FixedQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\FixedSortQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\Queue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Compressors\GZipCompressor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CustomBlockSeporator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\FilePart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessPlans\ProcessPlanBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BlockingCollections\BlockingFixedSortQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessPlans\ProcessPlanMultithread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProcessPlans\ProcessPlanSinglethread.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Sorters\ShellSort.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ThreadPool.cs" />
+  </ItemGroup>
+</Project>
