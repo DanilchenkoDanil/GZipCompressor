@@ -43,6 +43,6 @@ steps:
 
 - task: PublishTestResults@2
   inputs:
-    testResultsFormat: 'JUnit'
+    testResultsFormat: 'VSTest'
     testResultsFiles: '**/TEST-*.xml'
     testRunTitle: 'test-run_pub'
